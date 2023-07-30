@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  flask-app:
+    build: ./back-end
+    ports:
+      - "8790:8790"
+
+  vue-front-end:
+    build: ./web-vue3
+    ports:
+      - "8791:8790"
+

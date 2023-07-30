@@ -1,0 +1,6 @@
+__pychache__/
+.gitignore
+.idea
+Pipfile
+Pipflie.lock
+README.MD
