@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import re
+
+from algorithm.simulated_annealing_pso import optimize_function
 from pf_optimal import pf_optimal
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -90,30 +92,25 @@ print(Data1)
 U2 = np.zeros((Y, T))
 Count = np.zeros(Y)
 
-for t in range(T):
-    temp =  S_load1[:, t]
-    aa, _, _ = pf_optimal(S_plan + S_plan_before, P_pv, Z, temp.reshape((len(temp), 1)), Y)
-    U2[:, t] = aa.reshape((len(aa),))
-    for i in range(Y):
-        if U2[i, t] < 0.95 or U2[i, t] > 1.05:
-            Count[i] += 1
-
-Data = np.where(Count > 0)[0]
-
-if len(Data) == 0:
-    print("无节点电压越限！")
-    # im = Image.open("通过.png")  # 读取图像
-    # plt.imshow(im)  # 显示图像
-    # plt.show()
-else:
-    Str2 = []
-    for i in range(len(Data)):
-        numStr = f"第{Data[i]+1}个节点电压越限"
-        Str2.append(numStr)
-    print("\n".join(Str2))
-    # im = Image.open("警告.png")  # 读取图像
-    # plt.imshow(im)  # 显示图像
-    # plt.show()
+# data1节点越限判断
+# for t in range(T):
+#     temp =  S_load1[:, t]
+#     aa, _, _ = pf_optimal(S_plan + S_plan_before, P_pv, Z, temp.reshape((len(temp), 1)), Y)
+#     U2[:, t] = aa.reshape((len(aa),))
+#     for i in range(Y):
+#         if U2[i, t] < 0.95 or U2[i, t] > 1.05:
+#             Count[i] += 1
+#
+# Data = np.where(Count > 0)[0]
+#
+# if len(Data) == 0:
+#     print("无节点电压越限！")
+# else:
+#     Str2 = []
+#     for i in range(len(Data)):
+#         numStr = f"第{Data[i]+1}个节点电压越限"
+#         Str2.append(numStr)
+#     print("\n".join(Str2))
 
 # todayDate = np.datetime_as_string(np.datetime64('now'), unit='s')
 # csv_file = todayDate + '评估方案下各节点电压.csv'
@@ -137,15 +134,15 @@ lamda = 0.5  # 退火常数
 
 # 输入光伏以及负荷典型日数据
 N = T  # 以一个典型日为例，15分钟一个节点，共96个节点
-
+optimize_function(Z, S_load, Xmin, Xmax, P_pv, T)
 # 初始化种群个体
-pop_x, pop_v = initial(pop, V, M, P_pv, Z, S_load, Xmin, Xmax.reshape((Xmax.shape[1],)), N)
-# print('pop_x', pop_x.shape, pop_v.shape)
-
-[pbest,pbest_value,k]=gbest_fitness(pop_x,V,M,pop)
-print('KK', pbest,pbest_value,k)
-
-t = 0
-g_best[t,:]=pbest
-change_v=update_v(t,gen,pop_v,pop_x[:,0:V],g_best,V,pop,pbest)
-print('change_v',change_v)
+# pop_x, pop_v = initial(pop, V, M, P_pv, Z, S_load, Xmin, Xmax.reshape((Xmax.shape[1],)), N)
+# # print('pop_x', pop_x.shape, pop_v.shape)
+#
+# [pbest,pbest_value,k]=gbest_fitness(pop_x,V,M,pop)
+# print('KK', pbest,pbest_value,k)
+#
+# t = 0
+# g_best[t,:]=pbest
+# change_v=update_v(t,gen,pop_v,pop_x[:,0:V],g_best,V,pop,pbest)
+# print('change_v',change_v)

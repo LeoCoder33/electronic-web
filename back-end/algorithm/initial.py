@@ -3,7 +3,7 @@ from mokuaihanshu import mokuaihanshu
 
 def initial(pop, V, M, P_pv, Z, S_load, Xmin, Xmax, N):
     pop_x = np.zeros((pop, V+M))  # 粒子的位置初始种群
-    pop_v = np.zeros((pop, V+M))  # 粒子的速度初始种群
+    pop_v = np.zeros((pop, V))  # 粒子的速度初始种群
     
     print(Xmin.shape, Xmax.shape)
     for i in range(pop):  # 初始化种群的个体
@@ -14,6 +14,6 @@ def initial(pop, V, M, P_pv, Z, S_load, Xmin, Xmax, N):
     for i in range(pop):
         temp = pop_x[i, :]
         result = mokuaihanshu(temp.reshape((1, len(temp))), pop, M, V, P_pv, Z, S_load, N)  # 求出各个体的目标函数值
-        pop_x[i, V-1:V+M-1] = result
+        pop_x[i, V:V+M] = result
     
     return pop_x, pop_v

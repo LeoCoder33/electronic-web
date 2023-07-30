@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
 import re
@@ -37,6 +39,14 @@ def plan_evaluation(architecture, existPV, PackingPV, loadData, PVdata):
     evaluation_data[:, 0] = t
     evaluation_data[:, 1] = S_plan_before
     evaluation_data[:, 2] = S_plan
+    # 把evaluation_data封装成xslx文件
+    # 保存文件
+    # 获取当前日期时间
+    todayDate = datetime.now().strftime("%y-%m-%d-%H-%M")
+
+    # 将数组写入Excel文件
+    df = pd.DataFrame(evaluation_data, columns=["Column 1", "Column 2", "Column 3"])
+    df.to_excel(todayDate + "光伏报装方案.xlsx", index=False)
     # 判断是否有电压越界的情况
     # 负荷数据
     S_load = pd.read_excel(loadData, header=None)
@@ -47,7 +57,6 @@ def plan_evaluation(architecture, existPV, PackingPV, loadData, PVdata):
     # 光伏数据
     A = pd.read_excel(PVdata, header=None).values
     P_pv = np.mean(pd.to_numeric(A.flatten(), errors='coerce').reshape(A.shape[1], -1), axis=0)[0]
-
     Y = Z.shape[0]
     T = S_load1.shape[1]
     S_load = np.mean(S_load, axis=1)
@@ -61,12 +70,11 @@ def plan_evaluation(architecture, existPV, PackingPV, loadData, PVdata):
         for i in range(Y):
             if U2[i, t] < 0.95 or U2[i, t] > 1.05:
                 Count[i] += 1
-
     Data = np.where(Count > 0)[0]
-
     if len(Data) == 0:
         crossNode = -1
     else:
         for i in range(len(Data)):
             crossNode = Data[i] + 1
+
     return evaluation_data, crossNode
